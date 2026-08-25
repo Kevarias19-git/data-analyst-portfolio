@@ -16,25 +16,25 @@ This portfolio brings together projects where I apply that process end to end: S
 - [Education](#education)
 ## Projects
  
-#### [Port Settlement Data Analysis](./Port-Settlement-Analysis)
+#### [...]()
  
 ...
  
-**Tools:** Python, Pandas, Matplotlib, Seaborn
+**Tools:** ...
  
  
-#### [Business Queries on Port Settlements](./Port-Settlement-Analysis/queries)
- 
-...
- 
-**Tools:** SQL (joins, subqueries, aggregate functions)
- 
- 
-#### [Retail Sales Dashboard](./Retail-Sales-Dashboard)
+#### [...]()
  
 ...
  
-**Tools:** Power BI, Power Query
+**Tools:** ...
+ 
+ 
+#### [...]()
+ 
+...
+ 
+**Tools:** ...
  
 ## Certificates
  
@@ -42,7 +42,7 @@ This portfolio brings together projects where I apply that process end to end: S
 - Microsoft PL-300: Power BI Data Analyst Associate - *in progress*
 ## Education
  
-Pontificia Universidad Católica del Perú - Industrial Engineering (2017 - present), top third of class 2017-2019.
+Pontificia Universidad Católica del Perú - Industrial Engineering (2017 - present).
  
 ---
 
