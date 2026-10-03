@@ -36,5 +36,5 @@ For this project, I analyzed over 6 million records of Peru's public procurement
 
 ## Acknowledgements
  
-The data is sourced from Peru's public procurement open data portal, published by OECE (Organismo Especializado para las Contrataciones Eficientes y Transparentes) under the Open Contracting Data Standard, available at the [OECE — Contrataciones Abiertas](https://contratacionesabiertas.oece.gob.pe/descargas)(Open Contracting Data Standard)
+The data is sourced from Peru's public procurement open data portal, published by OECE (Organismo Especializado para las Contrataciones Eficientes y Transparentes) under the Open Contracting Data Standard, available at the [OECE — Contrataciones Abiertas](https://contratacionesabiertas.oece.gob.pe/descargas) (Open Contracting Data Standard)
 
