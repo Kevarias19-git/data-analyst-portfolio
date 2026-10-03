@@ -1,0 +1,21 @@
+# Datos crudos y procesados (muy pesados)
+data/raw/
+data/processed/
+
+# Base de datos (pesa ~2GB)
+*.db
+*.sqlite
+*.sqlite3
+
+# *.pbix
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+
+# Sistema
+.DS_Store
+Thumbs.db
