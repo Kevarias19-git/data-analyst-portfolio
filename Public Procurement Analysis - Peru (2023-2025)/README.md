@@ -1,4 +1,4 @@
-#### Public Procurement Analysis - Peru (2023-2025)
+# Public Procurement Analysis - Peru (2023-2025)
 
 For this project, I analyzed over 6 million records of Peru's public procurement process using SQLite and Power BI, built from the government's open contracting data (OCDS standard). I designed a relational schema with surrogate keys across six entities (processes, awards, contracts, suppliers, tenderers and parties), audited referential integrity to uncover that roughly 1% of contracts reference awards that don't exist in the dataset, and built eleven SQL views, including window function rankings and market concentration metrics, to power an executive dashboard covering top entities, top suppliers, low-competition processes, and contract value variance.
 
