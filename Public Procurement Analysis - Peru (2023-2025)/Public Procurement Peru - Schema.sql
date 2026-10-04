@@ -28,8 +28,8 @@ CREATE TABLE "records" (
     "tender_end_date" TEXT,
     "tender_duration_days" INTEGER,
     "tender_year" INTEGER,
-    "periodo_invalido" INTEGER,
-    "anho" INTEGER
+    "invalid_period" INTEGER,
+    "year" INTEGER
 );
 
 CREATE TABLE "parties" (
@@ -40,13 +40,13 @@ CREATE TABLE "parties" (
     "identifier_id" TEXT,
     "identifier_scheme" TEXT,
     "roles" TEXT,
-    "es_buyer" INTEGER,
-    "es_procuringentity" INTEGER,
-    "es_supplier" INTEGER,
-    "es_tenderer" INTEGER,
+    "is_buyer" INTEGER,
+    "is_procuringentity" INTEGER,
+    "is_supplier" INTEGER,
+    "is_tenderer" INTEGER,
     "region" TEXT,
     "department" TEXT,
-    "anho" INTEGER,
+    "year" INTEGER,
     FOREIGN KEY ("ocid") REFERENCES "records" ("ocid")
 );
 
@@ -56,7 +56,7 @@ CREATE TABLE "ten_tenderers" (
     "tender_id" TEXT,
     "tenderer_id" TEXT,
     "tenderer_name" TEXT,
-    "anho" INTEGER,
+    "year" INTEGER,
     FOREIGN KEY ("ocid") REFERENCES "records" ("ocid")
 );
 
@@ -67,7 +67,7 @@ CREATE TABLE "awards" (
     "award_amount" REAL,
     "award_currency" TEXT,
     "award_date" TEXT,
-    "anho" INTEGER,
+    "year" INTEGER,
     FOREIGN KEY ("ocid") REFERENCES "records" ("ocid")
 );
 
@@ -80,14 +80,14 @@ CREATE TABLE "contracts" (
     "contract_title" TEXT,
     "contract_amount" REAL,
     "final_value_amount" REAL,
-    "variacion_monto" REAL,
+    "amount_variance" REAL,
     "date_signed" TEXT,
     "period_start_date" TEXT,
     "period_end_date" TEXT,
     "period_days" INTEGER,
-    "periodo_invalido" INTEGER,
-    "anho" INTEGER,
-    "award_en_awards" INTEGER,
+    "invalid_period" INTEGER,
+    "year" INTEGER,
+    "award_in_awards" INTEGER,
     FOREIGN KEY ("award_key") REFERENCES "awards" ("award_key")
 );
 
@@ -98,7 +98,7 @@ CREATE TABLE "awa_suppliers" (
     "award_id" TEXT,
     "supplier_id" TEXT,
     "supplier_name" TEXT,
-    "anho" INTEGER,
+    "year" INTEGER,
     FOREIGN KEY ("award_key") REFERENCES "awards" ("award_key")
 );
 
