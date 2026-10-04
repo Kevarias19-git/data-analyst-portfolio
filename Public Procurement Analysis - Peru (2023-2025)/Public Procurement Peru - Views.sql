@@ -142,19 +142,3 @@ SELECT r.ocid, r.year, r.tender_title, r.procuring_entity_name, r.tender_value_a
 FROM records r
 LEFT JOIN awards a ON r.ocid = a.ocid
 WHERE a.ocid IS NULL;
-
-
--- 12. Feature table ready for R (clustering / outlier detection)
--- one row per process, with the key numeric and categorical variables
-DROP VIEW IF EXISTS v_ml_dataset;
-CREATE VIEW v_ml_dataset AS
-SELECT
-    r.ocid, r.year, r.procurement_category, r.procurement_method,
-    r.budget_amount, r.tender_value_amount, r.number_of_tenderers, r.tender_duration_days,
-    a.award_amount,
-    c.contract_amount, c.final_value_amount, c.amount_variance,
-    p.region, p.department
-FROM records r
-LEFT JOIN awards a ON r.ocid = a.ocid
-LEFT JOIN contracts c ON c.award_key = a.award_key
-LEFT JOIN parties p ON p.ocid = r.ocid AND p.party_id = r.procuring_entity_id;
