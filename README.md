@@ -10,17 +10,18 @@ This portfolio brings together projects where I apply that process end to end: S
   - ...
 - SQL
   - ...
-- Power BI
+- Rstudio
   - ...
 - [Certificates](#certificates)
 - [Education](#education)
 ## Projects
+In this section you can find short summary of the listed projects for quick comprehension. For more details, please check out the documents in each respective project folder.
+
+#### [Public Procurement Analysis - Peru (2023-2025)](https://github.com/Kevarias19-git/data-analyst-portfolio/tree/main/Public%20Procurement%20Analysis%20-%20Peru%20(2023-2025))
  
-#### [...]()
+For this project, I analyzed over 6 million records of Peru's public procurement process built from the government's open contracting data (OCDS standard). Leveraging my professional background in public procurement and state bidding, my objective was to structure this massive dataset to uncover actionable insights about market concentration, process competitiveness, and spending anomalies. After cleaning the data with Python, I designed a relational schema in SQLite across six entities, audited referential integrity (uncovering a 1% anomaly rate in contract references), and built eleven SQL views to calculate key metrics. In the end, I presented the findings in an executive Power BI dashboard that highlights top entities, top suppliers, low-competition processes, and contract value variances.
  
-...
- 
-**Tools:** ...
+The skills showcased in this project are python programming (pandas), data cleaning, type validation, data modeling, surrogate key design, referential integrity auditing, advanced SQL (CTEs, window functions, JOINs, aggregation), and Power BI dashboard design.
  
  
 #### [...]()
