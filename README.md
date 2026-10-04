@@ -1,6 +1,6 @@
 # Data Analyst Portfolio
  
-Hi, I'm Kevin Arias, an Industrial Engineering student at Pontificia Universidad Católica del Perú (PUCP) with a strong quantitative background and a focus on data analytics. I work with Python, SQL, Power BI, and R to turn raw, messy data into insights that support real decisions - from cleaning and structuring data to querying it, modeling it statistically, and presenting it in a way non-technical audiences can act on.
+Hi, I'm Kevin Arias, an Industrial Engineering student at Pontificia Universidad Católica del Perú (PUCP) with a strong quantitative background and a focus on data analytics, with a forward-looking vision of data science. I work with Python, SQL, Power BI, and R to turn raw, messy data into insights that support real decisions - from cleaning and structuring data to querying it, modeling it statistically, and presenting it in a way non-technical audiences can act on.
  
 This portfolio brings together projects where I apply that process end to end: SQL queries against relational databases, Python notebooks for exploratory analysis and statistical modeling, and Power BI dashboards for interactive reporting. Each one is documented in its own folder so you can review the data, the code, and the reasoning behind each decision - not just the final result.
  
