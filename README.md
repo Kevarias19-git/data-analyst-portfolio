@@ -6,7 +6,7 @@ This portfolio brings together projects where I apply that process end to end: S
  
 ## Table of Contents
  
-- Python
+- Python & PowerBI
   - [Public Procurement Analysis - Peru (2023-2025)](https://github.com/Kevarias19-git/data-analyst-portfolio/tree/main/Public%20Procurement%20Analysis%20-%20Peru%20(2023-2025))
 - SQL
   - ...
