@@ -8,9 +8,9 @@ This portfolio brings together projects where I apply that process end to end: S
  
 - Python & PowerBI
   - [Public Procurement Analysis - Peru (2023-2025)](https://github.com/Kevarias19-git/data-analyst-portfolio/tree/main/Public%20Procurement%20Analysis%20-%20Peru%20(2023-2025))
-- SQL
-  - ...
 - Rstudio
+  - [Peru Regional Export Trends (2005-2022)](https://github.com/Kevarias19-git/data-analyst-portfolio/tree/main/Peru%20Regional%20Export%20Trends%20(2005-2022))
+- SQL
   - ...
 - [Certificates](#certificates)
 - [Education](#education)
@@ -24,23 +24,28 @@ For this project, I analyzed over 6 million records of Peru's public procurement
 The skills showcased in this project are python programming (pandas), data cleaning, type validation, data modeling, surrogate key design, referential integrity auditing, advanced SQL (CTEs, window functions, JOINs, aggregation), and Power BI dashboard design.
  
  
-#### [...]()
+### Peru Regional Export Trends (2005-2022)
  
 ...
  
-**Tools:** ...
+
  
  
 #### [...]()
  
 ...
- 
-**Tools:** ...
+
+
  
 ## Certificates
  
-- [Google Data Analysis with Python](https://www.coursera.org/account/accomplishments/specialization/MAM7P6F6GO56) (2026) (Coursera - Google)
-- Microsoft PL-300: Power BI Data Analyst Associate - *in progress*
+- [Google Data Analysis with Python](https://www.coursera.org/account/accomplishments/specialization/MAM7P6F6GO56) (2026) (Google)
+- Microsoft PL-300: Power BI Data Analyst Associate - *in progress* (Microsoft)
+- Google Data Analytics Professional Certificate - *in progress*
+- AWS Knowledge Badge: Data Analytics - *in progress* (Amazon Web Services)
+- AWS Microcredential: Data Visualization Demonstrated - *in progress* (Amazon Web Services)
+- AWS Microcredential: Data Lakehouse Demonstrated - *in progress* (Amazon Web Services)
+
 ## Education
  
 Pontificia Universidad Católica del Perú - Industrial Engineering (2017 - present).
