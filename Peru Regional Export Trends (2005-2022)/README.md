@@ -7,7 +7,7 @@ By Kevin Arias
 
 This exploratory analysis is a personal portfolio project. I selected this topic because my interest in international trade and the Peruvian economy. In this project, I use *RStudio* for the entire process, from data preparation to machine learning, with the `tidyverse` for wrangling and plotting and the `tidymodels` framework for modeling.
 
-The dataset comes from the *Banco Central de Reserva del Perú* (BCRP) statistical portal, in the section of monthly series of exports and imports ([BCRP: Estadísticas, Exportaciones e Importaciones (series mensuales)](https://estadisticas.bcrp.gob.pe/estadisticas/series/mensuales/exportaciones-e-importaciones). It contains **monthly export values** for **25 regions** (24 departments plus Callao) from **January 2005 to December 2022** (216 months), plus the national **"Total"** and a **"No Registrado"** (not registered) category. The values are expressed in millions of US$ FOB. A previous cleaning script transformed the raw file into a *long-format* table with three columns: `date`, `department` and `export_value`: *Peru Regional Export Trends (2005-2022) Clean Data - Long.csv*.
+The dataset comes from the *Banco Central de Reserva del Perú* (BCRP) statistical portal, in the section of monthly series of exports and imports [BCRP: Statistics, Exports and Imports (monthly series)](https://estadisticas.bcrp.gob.pe/estadisticas/series/mensuales/exportaciones-e-importaciones). It contains **monthly export values** for **25 regions** (24 departments plus Callao) from **January 2005 to December 2022** (216 months), plus the national **"Total"** and a **"No Registrado"** (not registered) category. The values are expressed in millions of US$ FOB. Everything starts with the file *Peru Regional Export Trends (2005-2022) Clean Data - Long.csv*, the result of a preliminary cleaning script, which transformed the original file into a long-format table with three columns: `date`, `department`, and `export_value`.
 
 The main **objective** is to identify patterns, groups of similar regions and predictable behavior in Peru's regional exports, using both unsupervised (PCA and clustering) and supervised (classification) techniques.
 
@@ -45,28 +45,27 @@ I will import the following libraries:
 
 The clean long-format table produced by the cleaning script is imported with `read_csv()`, defining the column types explicitly (`date`, `department`, `export_value`).
 
-```{r}
-df_long <- read_csv(
-  here("Peru Regional Export Trends (2005-2022)","Peru Regional Export Trends (2005-2022) Clean Data - Long.csv"),
+```r
+df_long <- read_csv(here("Peru Regional Export Trends (2005-2022)","Peru Regional Export Trends (2005-2022) Clean Data - Long.csv"),
   col_types = cols(date = col_date(), department = col_character(), export_value = col_double())
 )
 ```
-```{r}
-A tibble: 5,832 × 3
-   date       department   export_value
-   <date>     <chr>               <dbl>
- 1 2005-01-01 Amazonas          0.177  
- 2 2005-01-01 Ancash          189.     
- 3 2005-01-01 Apurimac          0.00462
- 4 2005-01-01 Arequipa         27.9    
- 5 2005-01-01 Ayacucho          0.236  
- 6 2005-01-01 Cajamarca        83.8    
- 7 2005-01-01 Callao           94.5    
- 8 2005-01-01 Cusco            29.0    
- 9 2005-01-01 Huancavelica      0      
-10 2005-01-01 Huanuco           0.0896 
-# ℹ 5,822 more rows 
-```
+> ```
+> ## A tibble: 5,832 × 3
+> ##    date       department   export_value
+> ##    <date>     <chr>               <dbl>
+> ##  1 2005-01-01 Amazonas          0.177  
+> ##  2 2005-01-01 Ancash          189.     
+> ##  3 2005-01-01 Apurimac          0.00462
+> ##  4 2005-01-01 Arequipa         27.9    
+> ##  5 2005-01-01 Ayacucho          0.236  
+> ##  6 2005-01-01 Cajamarca        83.8    
+> ##  7 2005-01-01 Callao           94.5    
+> ##  8 2005-01-01 Cusco            29.0    
+> ##  9 2005-01-01 Huancavelica      0      
+> ## 10 2005-01-01 Huanuco           0.0896 
+> ## ℹ 5,822 more rows 
+> ```
 
 &nbsp;
 
@@ -79,10 +78,10 @@ Two data frames are created from the original table:
 
 I then use `glimpse()` and `skim()` to understand the structure of `df_model`.
 
-```{r}
+```r
 df_total <- df_long %>% filter(department == "Total")
 ```
-```{r}
+```
 # A tibble: 216 × 3
    date       department export_value
    <date>     <chr>             <dbl>
@@ -99,10 +98,10 @@ df_total <- df_long %>% filter(department == "Total")
 # ℹ 206 more rows
 ```
 
-```{r}
+```r
 df_model <- df_long %>% filter(!department %in% c("Total", "No Registrado"))
 ```
-```{r}
+```
 # A tibble: 5,400 × 3
    date       department   export_value
    <date>     <chr>               <dbl>
@@ -119,11 +118,11 @@ df_model <- df_long %>% filter(!department %in% c("Total", "No Registrado"))
 # ℹ 5,390 more rows
 ```
 
-```{r}
+```r
 glimpse(df_model)
 ```
 
-```{r}
+```
 Rows: 5,400
 Columns: 3
 $ date         <date> 2005-01-01, 2005-01-01, 2005-01-01, 2005-01-01, 2005-01-01, 2005-01-01, 20…
@@ -131,11 +130,11 @@ $ department   <chr> "Amazonas", "Ancash", "Apurimac", "Arequipa", "Ayacucho", "
 $ export_value <dbl> 0.17747598, 188.67116525, 0.00462130, 27.92751664, 0.23633488, 83.76016196,…
 ```
 
-```{r}
+```r
 skim(df_model)
 ```
 
-```{r}
+```
 Data summary Name 	df_model
 Number of rows 	5400
 Number of columns 	3
