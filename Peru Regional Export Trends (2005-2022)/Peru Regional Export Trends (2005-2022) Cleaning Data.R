@@ -1,4 +1,6 @@
-#Peru Regional Export Trends (2005-2022)
+# ==============================================================================
+# Peru Regional Export Trends (2005-2022)
+# ==============================================================================
 
 # Data cleaning, transformation and type validation
 library(tidyverse)  
@@ -78,14 +80,5 @@ missing_summary <- exports_long |>
 
 print(missing_summary)
 
-
-# Build a wide matrix for clustering
-exports_wide <- exports_long |>
-  pivot_wider(names_from = date, values_from = export_value) |>
-  arrange(department)
-
-write_csv(exports_long,"Peru Regional Export Trends (2005-2022) Clean Data - Long.csv")
-write_csv(exports_wide,"Peru Regional Export Trends (2005-2022) Clean Data - Wide.csv")
-
-glimpse(exports_wide[, 1:15])
-
+# Save the cleaned long-format table
+write_csv(exports_long, "Peru Regional Export Trends (2005-2022) Clean Data - Long.csv")
