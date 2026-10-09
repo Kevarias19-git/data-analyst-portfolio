@@ -1,3 +1,10 @@
+#' ---
+#' title: "Peru Regional Export Trends (2005-2022) - ML Scripts"
+#' author: "Kevin Arias"
+#' date: "`r Sys.Date()`"
+#' output: html_document
+#' ---
+
 # ==============================================================================
 # ML SCRIPTS
 # ==============================================================================
@@ -6,9 +13,9 @@ suppressPackageStartupMessages({
 library(tidyverse)
 library(lubridate)
 library(tidymodels)
-library(discrim)    # Naive Bayes engine
 library(factoextra) # Visualize PCA and clustering
 library(skimr)
+library(here)
 })
 
 suppressMessages({
@@ -20,16 +27,10 @@ set.seed(123)
 #+ fig.width=14, fig.height=10
 
 # 1. DATA LOADING AND QUALITY CHECKS
-# Same folder used in the cleaning script)
-setwd("F:/data-analyst-portfolio/Peru Regional Export Trends (2005-2022)")
-
 # Load the clean long-format table produced by the cleaning script
-df_long <- read_csv("Peru Regional Export Trends (2005-2022) Clean Data - Long.csv",
-  col_types = cols(
-    date         = col_date(),
-    department   = col_character(),
-    export_value = col_double()
-  )
+df_long <- read_csv(
+  here("Peru Regional Export Trends (2005-2022)","Peru Regional Export Trends (2005-2022) Clean Data - Long.csv"),
+  col_types = cols(date = col_date(), department = col_character(), export_value = col_double())
 )
 
 # Keep the national total separately to compute regional shares
@@ -56,7 +57,7 @@ plot_lines
 # 2.2 Plot a month vs year heatmap for one region (e.g., Arequipa)
 plot_heatmap_Arequipa <- df_model %>%
   filter(department == "Arequipa") %>%
-  mutate(year = year(date), month = month(date, label = TRUE)) %>%
+  mutate(year = year(date),month = factor(month(date), levels = 1:12, labels = month.abb)) %>%
   ggplot(aes(x = month, y = factor(year), fill = export_value)) +
   geom_tile(color = "white") +
   scale_fill_viridis_c() +
@@ -83,7 +84,7 @@ plot_share
 
 
 # 3. FEATURE ENGINEERING (one row per region)
-# 3.1 Compute descriptive variables per region
+# 3.1 Descriptive features using the full period (used only for PCA/clustering, not for the classifier)
 features_raw <- df_model %>%
   arrange(department, date) %>%
   group_by(department) %>%
@@ -150,46 +151,94 @@ plot_pca
 
 
 # 5. CLUSTERING
+
+k_clusters <- 5   # chosen from the silhouette peak (k = 5).The elbow plot shows no sharp bend
+
 # 5.1 Compute the Euclidean distance matrix
 dist_matrix <- dist(features_scaled, method = "euclidean")
 
+set.seed(123)
+
+plot_elbow <- fviz_nbclust(features_scaled, kmeans, method = "wss", nstart = 25) +
+  labs(title = "Elbow Method")
+plot_silhouette <- fviz_nbclust(features_scaled, kmeans, method = "silhouette", nstart = 25) +
+  labs(title = "Average Silhouette Width")
+plot_elbow
+plot_silhouette
+
 # 5.2 Fit hierarchical clustering with Ward's method and plot the dendrogram
 hc_fit <- hclust(dist_matrix, method = "ward.D2")
-plot_dendro <- fviz_dend(hc_fit, k = 4, rect = TRUE,
+plot_dendro <- fviz_dend(hc_fit, k = k_clusters, rect = TRUE,
                          main = "Dendrogram of Exporting Regions")
 plot_dendro
 
-# 5.3 Assign each region to a cluster (cut the tree at k = 4)
-hc_clusters <- cutree(hc_fit, k = 4)
+# 5.3 Assign each region to a cluster (cut the tree at k = 5)
+hc_clusters <- cutree(hc_fit, k = k_clusters)
 
 # 5.4 Fit K-Means with the same number of clusters
 set.seed(123)
-kmeans_fit <- kmeans(features_scaled, centers = 4, nstart = 25)
+kmeans_fit  <- kmeans(features_scaled, centers = k_clusters, nstart = 25)
 plot_kmeans <- fviz_cluster(kmeans_fit, data = features_scaled, repel = TRUE,
-                            main = "K-Means Clusters (K = 4)")
+                            main = paste0("K-Means Clusters (K = ", k_clusters, ")"))
 plot_kmeans
 
 # 5.5 Compare both clustering results
 cluster_comparison <- table(Hierarchical = hc_clusters, KMeans = kmeans_fit$cluster)
 cluster_comparison
 
+# 5.6 Save cluster assignments and profile each cluster
+cluster_results <- tibble(
+  department     = rownames(features_scaled),
+  hc_cluster     = as.integer(hc_clusters),
+  kmeans_cluster = as.integer(kmeans_fit$cluster)
+)
+cluster_results
+
+cluster_profile <- features_raw %>%
+  left_join(cluster_results, by = "department") %>%
+  group_by(kmeans_cluster) %>%
+  summarise(n = n(), across(where(is.numeric) & !any_of("hc_cluster"), mean), .groups = "drop")
+cluster_profile
+
 
 # 6. SUPERVISED CLASSIFICATION (Region-Month level)
-# # Target: compare with the same month of the previous year
+# Target: compare with the same month of the previous year
 
-# 6.1 Build the target variable, the lagged predictors
+# 6.1 Target, lagged predictors and seasonality
 df_class <- df_model %>%
   arrange(department, date) %>%
   group_by(department) %>%
   mutate(
-    beat_prev_year = factor(ifelse(export_value > lag(export_value, 12), "Yes", "No"),
+    lag_1  = lag(export_value, 1),     # Previous month
+    lag_3  = lag(export_value, 3),     # Previous quarter
+    lag_12 = lag(export_value, 12),    # Same month last year (the target's reference)
+    beat_prev_year = factor(ifelse(export_value > lag_12, "Yes", "No"),
                             levels = c("Yes", "No")),   # "Yes" is the positive class
-    lag_1  = lag(export_value, 1),    # Previous month
-    lag_3  = lag(export_value, 3)     # Previous quarter
+    gap_1_12 = log1p(lag_1) - log1p(lag_12),            # Last month vs. same month last year
+    month    = factor(month(date))                      # Seasonality (unordered factor)
   ) %>%
   ungroup() %>%
-  drop_na(beat_prev_year, lag_1, lag_3) %>% # Only remove nulls in predictors and the target
-  left_join(features_raw, by = "department") # Combine regional features without scaling
+  drop_na(beat_prev_year, lag_1, lag_3, lag_12)
+
+# Regional features computed only with training years (< 2020) to avoid leakage
+features_train <- df_model %>%
+  filter(year(date) < 2020) %>%
+  arrange(department, date) %>%
+  group_by(department) %>%
+  mutate(t = row_number()) %>%
+  summarise(
+    mean_export = mean(export_value),
+    sd_export   = sd(export_value),
+    cv          = sd_export / mean_export,
+    slope_rel   = coef(lm(export_value ~ t))[[2]] / mean_export,
+    r2_trend    = summary(lm(export_value ~ t))$r.squared,
+    cagr        = (sum(export_value[year(date) == 2019]) /
+                     sum(export_value[year(date) == 2005]))^(1 / 14) - 1,
+    .groups = "drop"
+  )
+
+df_class <- df_class %>%
+  left_join(features_train, by = "department")
 
 # 6.2 Check class balance
 class_balance <- df_class %>%
@@ -204,7 +253,7 @@ test_class  <- df_class %>% filter(year(date) >= 2020)
 # 6.4 Define the preprocessing recipe
 rec_class <- recipe(beat_prev_year ~ ., data = train_class) %>%
   update_role(date, export_value, new_role = "ID") %>% 
-  step_dummy(department, one_hot = TRUE) %>%
+  step_dummy(department, month, one_hot = TRUE) %>%
   step_zv(all_predictors()) %>%
   # Filter correlation and scale using only the train_class distribution
   step_corr(all_numeric_predictors(), threshold = 0.9) %>%
@@ -223,6 +272,7 @@ model_specs <- list(
 )
 
 # 6.6 Fit every model within its own workflow
+set.seed(123)
 fits <- map(model_specs, function(spec) {
   workflow() %>%
     add_recipe(rec_class) %>%
@@ -242,7 +292,7 @@ results
 
 # 7. MODEL EVALUATION
 # 7.1 Compute accuracy, precision, recall, F1 and AUC for each model
-class_metrics <- metric_set(accuracy, precision, recall, f_meas)
+class_metrics <- metric_set(accuracy, bal_accuracy, precision, recall, f_meas, kap)
 
 metrics_table <- imap_dfr(results, function(res, name) {
   bind_rows(
@@ -253,6 +303,20 @@ metrics_table <- imap_dfr(results, function(res, name) {
 }) %>%
   select(model, .metric, .estimate) %>%
   pivot_wider(names_from = .metric, values_from = .estimate) %>%
+  arrange(desc(roc_auc))
+metrics_table
+
+# Baseline: always predict "Yes"
+baseline_pred <- test_class %>%
+  transmute(beat_prev_year,
+            .pred_class = factor("Yes", levels = c("Yes", "No")))
+
+baseline_row <- class_metrics(baseline_pred, truth = beat_prev_year, estimate = .pred_class) %>%
+  select(.metric, .estimate) %>%
+  pivot_wider(names_from = .metric, values_from = .estimate) %>%
+  mutate(model = "baseline_always_yes", roc_auc = 0.5)
+
+metrics_table <- bind_rows(metrics_table, baseline_row) %>%
   arrange(desc(roc_auc))
 metrics_table
 
@@ -296,3 +360,4 @@ plot_importance_tree <- fits$decision_tree %>%
   theme_minimal() +
   labs(title = "Variable Importance (Decision Tree)", x = "Importance", y = NULL)
 plot_importance_tree
+
