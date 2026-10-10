@@ -121,3 +121,4 @@ max(total_check$diff)
 
 # 7. SAVE THE CLEAN TABLE
 write_csv(exports_long, OUT_PATH)
+

@@ -26,9 +26,9 @@ The skills showcased in this project are python programming (pandas), data clean
  
 ### Peru Regional Export Trends (2005-2022)
  
-...
- 
+For this project, I analyzed 18 years of monthly export data from Peru's central bank (BCRP), covering 25 regions (24 departments plus Callao) from 2005 to 2022. My objective was to understand how regional exports have evolved, how concentrated they are, and whether regions can be grouped into meaningful profiles. After cleaning and validating the raw Excel workbook with R (reshaping it into a tidy long-format table, auditing duplicates, missing values and zeros, and checking that the regions add up to the national total), I explored the data and found that exports are highly concentrated: Lima represents about 24% of national exports and the top five regions about 60%. I then used PCA, whose first two components explain about 72% of the variance, together with K-Means and hierarchical clustering to group the regions into five profiles (although the silhouette values show that the structure is weak), and built a classification model that predicts whether a region's exports in a given month will exceed those of the same month of the previous year. Using a chronological train/test split to avoid data leakage and comparing logistic regression, decision tree, random forest and XGBoost against an "always Yes" baseline, the best models reach an AUC of about 0.83 on 2020-2022, driven mostly by persistence rather than seasonality or region identity.
 
+The skills showcased in this project are R programming (tidyverse, lubridate, janitor, readxl), data cleaning, type validation and data quality auditing, exploratory data analysis and visualization (ggplot2), feature engineering, dimensionality reduction (PCA), clustering (K-Means and hierarchical), supervised classification with tidymodels, leakage-free model evaluation, and communicating results in a documented README.
  
  
 #### [...]()
