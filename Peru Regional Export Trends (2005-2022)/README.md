@@ -490,7 +490,7 @@ plot_lines <- df_model %>%
 plot_lines
 ```
 
-![Plot Evolution by Region](images/Plot%20-%20Export%20Evolution%20by%20Region%20%282005-2022%29.png)
+![Plot Evolution by Region](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Export%20Evolution%20by%20Region%20%282005-2022%29.png)
 
 Here are some insights we can draw from the charts:
 
@@ -520,7 +520,7 @@ plot_heatmap_Arequipa <- df_model %>%
 plot_heatmap_Arequipa
 ```
 
-![Heatmap Arequipa](images/Plot%20-%20Monthly%20Heatmap%20-%20Arequipa.png)
+![Heatmap Arequipa](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Monthly%20Heatmap%20-%20Arequipa.png)
 
 - The color changes much more from **top to bottom (years)** than from **left to right (months)**, so the **long-term growth** dominates over any seasonal pattern.
 - A clear dip appears in **April 2020**, which matches the COVID-19 lockdown.
@@ -584,7 +584,7 @@ plot_share <- df_share %>%
 plot_share
 ```
 
-![Average Exports by Region](images/Plot%20-%20Average%20Share%20of%20National%20Exports%20by%20Region.png)
+![Average Exports by Region](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Average%20Share%20of%20National%20Exports%20by%20Region.png)
 
 - **Lima** alone represents about **24%** of national exports, followed by Ancash (10.3%), Ica (8.7%), Arequipa (8.5%) and Callao (8.2%).
 - The **top 5 regions** together account for roughly **60%** of exports.
@@ -864,7 +864,7 @@ plot_scree <- fviz_eig(pca_fit, addlabels = TRUE)
 plot_scree
 ```
 
-![Scree Plot](images/Plot%20-%20Scree%20plot.png)
+![Scree Plot](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Scree%20plot.png)
 
 ```r
 # Plot the biplot of regions and variables
@@ -873,7 +873,7 @@ plot_pca <- fviz_pca_biplot(pca_fit, repel = TRUE,
 plot_pca
 ```
 
-![PCA Biplot](images/Plot%20-%20PCA%20Biplot%20of%20Regions%20and%20Features.png)
+![PCA Biplot](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20PCA%20Biplot%20of%20Regions%20and%20Features.png)
 
 - **PC1 explains 42.5%**, **PC2 29.5%** and **PC3 17.2%** of the variance. The first two components explain about **72%** and the first three about **89%**.
 - **PC1** is driven mainly by **growth and trend** variables (`slope_rel`, `cagr`, `r2_trend`). Regions on the right (Apurimac, Ayacucho, Puno, Cusco) grew the most, and regions on the left (Tacna, Pasco, Cajamarca, Moquegua) grew the least.
@@ -900,13 +900,13 @@ plot_silhouette <- fviz_nbclust(features_scaled, kmeans, method = "silhouette", 
 plot_elbow
 ```
 
-![Elbow Method](images/Plot%20-%20Elbow%20Method.png)
+![Elbow Method](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Elbow%20Method.png)
 
 ```r
 plot_silhouette
 ```
 
-![Average Silhouette Width](images/Plot%20-%20Average%20Silhouette%20Width.png)
+![Average Silhouette Width](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Average%20Silhouette%20Width.png)
 
 Now I fit the hierarchical clustering and plot the dendrogram.
 
@@ -918,7 +918,7 @@ plot_dendro <- fviz_dend(hc_fit, k = k_clusters, rect = TRUE,
 plot_dendro
 ```
 
-![Dendrogram of Exporting Regions](images/Plot%20-%20Dendrogram%20of%20Exporting%20Regions.png)
+![Dendrogram of Exporting Regions](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Dendrogram%20of%20Exporting%20Regions.png)
 
 I assign each region to a cluster (cutting the tree at k = 5) and fit K-Means with the same number of clusters.
 
@@ -936,7 +936,7 @@ plot_kmeans <- fviz_cluster(kmeans_fit, data = features_scaled, repel = TRUE,
 plot_kmeans
 ```
 
-![K-Means Clusters](images/Plot%20-%20K-Means%20Clusters%20%28K%20=%205%29.png)
+![K-Means Clusters](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20K-Means%20Clusters%20%28K%20%3D%205%29.png)
 
 Comparison between both methods:
 
@@ -1343,7 +1343,7 @@ plot_roc <- imap_dfr(results, function(res, name) {
 plot_roc
 ```
 
-![ROC Curves by Model](images/Plot%20-%20ROC%20Curves%20by%20Model.png)
+![ROC Curves by Model](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20ROC%20Curves%20by%20Model.png)
 
 - All four models **outperform the baseline**: about **10-12 percentage points** more accuracy, a balanced accuracy of **0.74-0.75** (baseline: 0.50) and a kappa of **0.48-0.50** (baseline: 0).
 - The **ROC AUC is 0.81-0.83**, which indicates good but not excellent discrimination.
@@ -1369,7 +1369,7 @@ plot_importance_rf <- fits$random_forest %>%
 plot_importance_rf
 ```
 
-![Variable Importance Random Forest](images/Plot%20-%20Variable%20Importance%20%28Random%20Forest%29.png)
+![Variable Importance Random Forest](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Variable%20Importance%20%28Random%20Forest%29.png)
 
 ```r
 plot_importance_tree <- fits$decision_tree %>%
@@ -1384,7 +1384,7 @@ plot_importance_tree <- fits$decision_tree %>%
 plot_importance_tree
 ```
 
-![Variable Importance Decision Tree](images/Plot%20-%20Variable%20Importance%20%28Decision%20Tree%29.png)
+![Variable Importance Decision Tree](Peru%20Regional%20Export%20Trends%20%282005-2022%29%20Images/Plot%20-%20Variable%20Importance%20%28Decision%20Tree%29.png)
 
 - In both models, **`gap_1_12` is by far the most important variable**, followed by **`lag_12`**. The model mainly learns **persistence**: if last month was already above the same month of the previous year, this month is likely to be above it too.
 - The regional features (`slope_rel`, `cv`, `r2_trend`, `cagr`) come next, and the month and department dummy variables contribute very little. In the plots, `month_X1` to `month_X12` correspond to the months January to December.
