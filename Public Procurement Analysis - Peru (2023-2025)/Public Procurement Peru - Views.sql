@@ -1,6 +1,7 @@
 -- Aggregation views for Power BI
--- Run once over contracts.db (or again if the database is reloaded)
+-- Run over contracts.db after loading the data (safe to rerun)
 
+-- 1. Rank suppliers by awarded amount
 DROP VIEW IF EXISTS v_top_suppliers;
 CREATE VIEW v_top_suppliers AS
 SELECT
@@ -13,6 +14,7 @@ JOIN awards a ON s.award_key = a.award_key
 WHERE s.supplier_name IS NOT NULL
 GROUP BY s.supplier_name;
 
+-- 2. Rank procuring entities by year, processes and awarded amount
 DROP VIEW IF EXISTS v_top_entities;
 CREATE VIEW v_top_entities AS
 SELECT
@@ -25,6 +27,7 @@ JOIN awards a ON r.ocid = a.ocid
 WHERE r.procuring_entity_name IS NOT NULL
 GROUP BY r.year, r.procuring_entity_name;
 
+-- 3. List processes with a single tenderer
 DROP VIEW IF EXISTS v_low_competition_processes;
 CREATE VIEW v_low_competition_processes AS
 SELECT
@@ -35,18 +38,29 @@ JOIN ten_tenderers t ON r.ocid = t.ocid
 GROUP BY r.ocid, r.year, r.tender_title, r.procuring_entity_name
 HAVING COUNT(t.tenderer_id) = 1;
 
+-- 4. Summarize processes, amounts and tenderers per year
+-- Aggregate awards per process before joining, to avoid repeating the
+-- reference amount of processes with several awards
+-- Include sum and count of tenderers to compute a weighted average in Power BI
 DROP VIEW IF EXISTS v_annual_summary;
 CREATE VIEW v_annual_summary AS
 SELECT
     r.year,
-    COUNT(DISTINCT r.ocid)          AS total_processes,
-    SUM(r.tender_value_amount)      AS total_reference_amount,
-    SUM(a.award_amount)             AS total_awarded_amount,
-    AVG(r.number_of_tenderers)      AS average_tenderers
+    COUNT(DISTINCT r.ocid)                        AS total_processes,
+    CAST(SUM(r.tender_value_amount) AS REAL)      AS total_reference_amount,
+    CAST(SUM(a.award_total) AS REAL)              AS total_awarded_amount,
+    CAST(AVG(r.number_of_tenderers) AS REAL)      AS average_tenderers,
+    CAST(SUM(r.number_of_tenderers) AS REAL)      AS tenderers_sum,
+    CAST(COUNT(r.number_of_tenderers) AS REAL)    AS processes_with_tenderers
 FROM records r
-LEFT JOIN awards a ON r.ocid = a.ocid
+LEFT JOIN (
+    SELECT ocid, SUM(award_amount) AS award_total
+    FROM awards
+    GROUP BY ocid
+) a ON r.ocid = a.ocid
 GROUP BY r.year;
 
+-- 5. Compare contract amount and final value
 DROP VIEW IF EXISTS v_contracts_with_variance;
 CREATE VIEW v_contracts_with_variance AS
 SELECT
@@ -58,12 +72,13 @@ FROM contracts c
 JOIN records r ON c.ocid = r.ocid
 WHERE c.amount_variance IS NOT NULL;
 
+-- 6. Flag contracts whose award is missing from the awards table
 DROP VIEW IF EXISTS v_orphan_contracts;
 CREATE VIEW v_orphan_contracts AS
 SELECT c.* FROM contracts c WHERE c.award_in_awards = 0;
 
 
--- 7. Supplier ranking PER YEAR (not just historical total), using RANK()
+-- 7. Rank suppliers per year with RANK()
 DROP VIEW IF EXISTS v_annual_supplier_ranking;
 CREATE VIEW v_annual_supplier_ranking AS
 WITH supplier_amount_year AS (
@@ -83,8 +98,8 @@ SELECT
 FROM supplier_amount_year;
 
 
--- 8. Market concentration: each supplier's % share within its
--- procurement category (uses SUM() OVER for the partition total)
+-- 8. Measure market concentration: supplier share (%) within each
+-- procurement category, using SUM() OVER for the category total
 DROP VIEW IF EXISTS v_category_concentration;
 CREATE VIEW v_category_concentration AS
 WITH category_supplier_amount AS (
@@ -105,8 +120,8 @@ SELECT
 FROM category_supplier_amount;
 
 
--- 9. Geographic distribution (region/department) of the buying entity
--- — needed for a map visual in Power BI
+-- 9. Distribute processes and amounts by region and department of the
+-- buying entity, for the map visual in Power BI
 DROP VIEW IF EXISTS v_geographic_detail;
 CREATE VIEW v_geographic_detail AS
 SELECT
@@ -122,8 +137,8 @@ WHERE p.region IS NOT NULL
 GROUP BY p.region, p.department, r.year;
 
 
--- 10. Processes by category and procurement method — for a treemap
--- or stacked bar chart
+-- 10. Count processes by category and procurement method,
+-- for the treemap and stacked bar chart
 DROP VIEW IF EXISTS v_category_method;
 CREATE VIEW v_category_method AS
 SELECT
@@ -134,8 +149,7 @@ FROM records
 GROUP BY year, procurement_category, procurement_method;
 
 
--- 11. Processes WITHOUT an award — the mirror of v_orphan_contracts,
--- another data quality/scope finding worth documenting
+-- 11. List processes without an award, the counterpart of v_orphan_contracts
 DROP VIEW IF EXISTS v_processes_without_award;
 CREATE VIEW v_processes_without_award AS
 SELECT r.ocid, r.year, r.tender_title, r.procuring_entity_name, r.tender_value_amount

@@ -17,7 +17,7 @@ For this project, I analyzed over 6 million records of Peru's public procurement
 
 **Summary**: Executive KPIs (total awarded amount vs. reference budget, average tenderers, total processes), the execution trend by year, and reference budget broken down by procurement category.
 ![Summary](Public%20Procurement%20Peru%20-%20Dashboard%20images/dashboard-summary.jpg)
-*Awarded spending reached S/ 82.18bn against a S/ 148.98bn reference budget across 236K processes (2023-2025).*
+*In 2025, awarded spending reached S/ 82.18bn against a S/ 127.84bn reference budget (64%) across 79K processes. Across 2023-2025, there were 236K processes and S/ 240.68bn awarded against S/ 374.20bn of reference budget.*
 
 
 **Suppliers**: Top 10 suppliers by awarded amount, the year-over-year evolution of the top 5 suppliers, and each supplier's market share within its procurement category.
@@ -60,6 +60,13 @@ For this project, I analyzed over 6 million records of Peru's public procurement
 - `ten_tenderers` - all tenderers (winning or not) per process
   - Fields: 6
   - Records: 2,906,843
+
+
+&nbsp;
+## Data limitations
+
+- 1,933 contracts (0.98%) reference awards that do not exist in the source files. They are kept and flagged, not removed.
+- The field `tender_value_amount_pen` (reference amount converted to soles) is unreliable: in about 6,600 processes (2.8%) it is zero even though the original amount is positive. For this reason I use `tender_value_amount`, which is 98% in soles; the remaining ~2% (USD, EUR, GBP, etc.) is added without currency conversion, so the reference amounts are slightly understated.
 
 &nbsp;
 ## Acknowledgements
