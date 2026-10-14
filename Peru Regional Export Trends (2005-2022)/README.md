@@ -1410,9 +1410,9 @@ plot_importance_tree
 
 - **Year-over-year growth can be predicted moderately well.** The best models reach an AUC of about **0.83** and a balanced accuracy of about **0.75** on 2020-2022, clearly above the "always Yes" baseline. Most of the predictive power comes from **persistence** (recent exports compared with the same month of the previous year) and not from seasonality or region identity.
 
-**Limitations and next steps**:
+**Limitations**:
 
-- The models were evaluated on **one single chronological split**, without time-series cross-validation or hyperparameter tuning (`tune`). The next step would be to use rolling-origin resampling and tune the tree-based models.
+- The models were evaluated on **one single chronological split**, without time-series cross-validation or hyperparameter tuning (`tune`).
 - The predictors only use the past of each region's own series. Adding external variables such as **commodity prices** (copper, gold, etc.), the **exchange rate** or **global demand** could improve the predictions. 
 - The clustering structure is weak (silhouette about 0.26) and the regional features are computed over a period that includes the COVID-19 shock, so the groups can change if another period or other features are used.
 - Regional descriptive features are constant within each region, so they act partly as a regional "fingerprint" in the classifier.
