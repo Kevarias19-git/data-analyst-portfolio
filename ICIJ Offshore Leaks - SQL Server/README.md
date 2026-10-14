@@ -372,7 +372,7 @@ flowchart LR
     I[gr.Intermediary]
     A[gr.Address]
     X[gr.Other]
-    R{{"gr.Rel (edge table)<br/>rel_type, link, status,<br/>start_date, end_date, source_id"}}
+    R{{"<b>gr.Rel</b><br/>(edge table)<br/>rel_type, link, status,<br/>start_date, end_date, source_id"}}
 
     E <--> R
     O <--> R
