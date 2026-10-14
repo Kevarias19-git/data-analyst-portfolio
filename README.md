@@ -11,7 +11,7 @@ This portfolio brings together projects where I apply that process end to end: S
 - Rstudio
   - [Peru Regional Export Trends (2005-2022)](https://github.com/Kevarias19-git/data-analyst-portfolio/tree/main/Peru%20Regional%20Export%20Trends%20(2005-2022))
 - SQL
-  - ...
+  - [ICIJ Offshore Leaks: Relational Modeling and Graph Analysis Using SQL Server](https://github.com/Kevarias19-git/data-analyst-portfolio/tree/main/ICIJ%20Offshore%20Leaks%20-%20SQL%20Server)
 - [Certificates](#certificates)
 - [Education](#education)
 ## Projects
@@ -31,12 +31,12 @@ For this project, I analyzed 18 years of monthly export data from Peru's central
 The skills showcased in this project are R programming (tidyverse, lubridate, janitor, readxl), data cleaning, type validation and data quality auditing, exploratory data analysis and visualization (ggplot2), feature engineering, dimensionality reduction (PCA), clustering (K-Means and hierarchical), supervised classification with tidymodels, leakage-free model evaluation, and communicating results in a documented README.
  
  
-#### [...]()
+#### ICIJ Offshore Leaks: Relational Modeling and Graph Analysis Using SQL Server
  
-...
+For this project, I worked with the ICIJ Offshore Leaks Database, published by the International Consortium of Investigative Journalists, which contains about 2 million nodes and 3.3 million relationships between entities, officers, intermediaries and addresses. Out of interest in financial transparency and graph databases, my objective was to build a reproducible SQL Server pipeline that takes the raw CSV files to a validated relational model and a graph model, and to use it to understand how the network is structured. After loading the files into text-only staging tables with bulk inserts, I built a typed relational model and audited it at every stage: row counts that match from the CSV files to the graph, a mix of two date formats in the source, truncation errors solved by measuring the longest value of every column, and 1,139 IDs that appeared as both officer and intermediary, which I resolved by modeling each one as a single node with a role flag. I then built the graph with SQL Server graph tables (node and edge tables queried with MATCH) and found that four link types account for about 64% of all edges, that one registered agent address hosts 36,334 entities, and that the most connected officers are largely service providers and nominees, so a high number of connections should not be read as ownership. All results are presented in aggregated form, and the data and conceptual model belong to ICIJ, while my contribution is the implementation and analysis.
 
+The skills showcased in this project are T-SQL and SQL Server (bulk loading, staging tables, typed schema design), data quality auditing and validation, dynamic SQL, graph tables and pattern matching with MATCH, indexing, advanced SQL (joins, subqueries, aggregation), handling data licensing and attribution, and communicating results.
 
- 
 ## Certificates
  
 - [Google Data Analysis with Python](https://www.coursera.org/account/accomplishments/specialization/MAM7P6F6GO56) (2026) (Google)
