@@ -363,7 +363,7 @@ WHERE NOT EXISTS (SELECT 1 FROM dbo.officers o WHERE o.node_id = i.node_id);
 
 The database occupies about **6 GB** including the staging, typed and graph copies of the data.
 
-The following diagram summarizes the graph model.
+The following diagram summarizes the graph model: five node tables and a single edge table, `gr.Rel`, that can connect any pair of node types.
 
 ```mermaid
 flowchart LR
@@ -372,13 +372,13 @@ flowchart LR
     I[gr.Intermediary]
     A[gr.Address]
     X[gr.Other]
+    R{{"gr.Rel (edge table)<br/>rel_type, link, status,<br/>start_date, end_date, source_id"}}
 
-    E -- "gr.Rel (edge)<br/>rel_type, link, status,<br/>start_date, end_date, source_id" --> E
-    O --> E
-    I --> E
-    E --> A
-    O --> A
-    X --> E
+    E <--> R
+    O <--> R
+    I <--> R
+    A <--> R
+    X <--> R
 ```
 
 &nbsp;
