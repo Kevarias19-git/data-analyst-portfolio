@@ -1,10 +1,11 @@
---  Open Contracts (OCDS) Peru, 2023-2025
+-- Schema | Public Procurement Analysis - Peru (2023-2025)
 
--- records [1] ---> [*] com_parties (via ocid)
--- records [1] ---> [*] com_ten_tenderers (via ocid)
--- records [1] ---> [*] com_awards (via ocid)
---    com_awards [1] ---> [*] com_contracts (via award_key)
---    com_awards [1] ---> [*] com_awa_suppliers (via award_key)
+-- records [1] ---> [*] parties          (via ocid)
+-- records [1] ---> [*] ten_tenderers    (via ocid)
+-- records [1] ---> [*] awards           (via ocid)
+--    awards [1] ---> [*] contracts      (via award_key)
+--    awards [1] ---> [*] awa_suppliers  (via award_key)
+-- contracts and awa_suppliers also carry ocid, without a declared FK.
 
 
 CREATE TABLE "records" (
@@ -23,13 +24,13 @@ CREATE TABLE "records" (
     "tender_value_amount" REAL,
     "tender_value_currency" TEXT,
     "tender_value_amount_pen" REAL,
-    "number_of_tenderers" INTEGER,
     "tender_start_date" TEXT,
     "tender_end_date" TEXT,
+    "number_of_tenderers" INTEGER,
+    "year" INTEGER,
     "tender_duration_days" INTEGER,
     "tender_year" INTEGER,
-    "invalid_period" INTEGER,
-    "year" INTEGER
+    "invalid_period" INTEGER
 );
 
 CREATE TABLE "parties" (
@@ -102,8 +103,8 @@ CREATE TABLE "awa_suppliers" (
     FOREIGN KEY ("award_key") REFERENCES "awards" ("award_key")
 );
 
--- Indexes on FK columns (PKs already have an automatic unique index)
-CREATE INDEX IF NOT EXISTS ix_parties_ocid ON "parties"("ocid");
+-- Indexes on join columns (PKs already have an automatic unique index)
+CREATE INDEX IF NOT EXISTS ix_parties_ocid ON "parties"("ocid", "party_id");
 CREATE INDEX IF NOT EXISTS ix_ten_tenderers_ocid ON "ten_tenderers"("ocid");
 CREATE INDEX IF NOT EXISTS ix_awards_ocid ON "awards"("ocid");
 CREATE INDEX IF NOT EXISTS ix_contracts_award_key ON "contracts"("award_key");
