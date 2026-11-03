@@ -16,7 +16,7 @@ For this project, I analyzed about 6.9 million records of Peru's public procurem
 ## Dashboards
 
 **Summary**: Executive KPIs (processes, reference and awarded amounts, award rate, net difference vs. reference, single-bidder rate), awarded vs. reference amount by year, a waterfall from the reference amount to the awarded amount, the top 10 procuring entities and the awarded amount by procurement category.
-![Summary](Public%20Procurement%20Peru%20-%20Dashboard%20images/dashboard-summary.png)
+![Summary](Public%20Procurement%20Peru%20-%20Dashboard%20images/dashboard-summary.jpg)
 *Across 2023-2025, 236,234 processes had a reference amount of S/ 384.90bn and S/ 248.72bn was awarded (78.3% of processes were awarded). Among awarded processes with a reported reference, the awarded amount was 5.0% below the reference. 51,254 processes (S/ 129bn of reference) were not awarded.*
 
 
