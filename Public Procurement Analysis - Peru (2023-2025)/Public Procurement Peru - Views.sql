@@ -1,15 +1,7 @@
 -- Views | Public Procurement Analysis - Peru (2023-2025)
--- Run against contracts.db after loading the data (safe to rerun)
--- Require SQLite 3.25+ (window functions)
-
--- Load in Power BI:
---   Facts: v_fact_process, v_fact_award
---   Dimensions: v_dim_supplier, v_dim_entity, v_dim_category, v_dim_method, v_dim_department
---   Detail: v_contracts_with_variance, v_orphan_contracts, v_processes_without_award, v_data_quality_summary
--- Skip v_fx_* (helpers) and the [OPTIONAL] views (replaceable with DAX measures)
 
 
--- Drop every view (dependents first, v_fx_raw is a legacy helper)
+-- Drop every view
 DROP VIEW IF EXISTS v_data_quality_summary;
 DROP VIEW IF EXISTS v_processes_without_award;
 DROP VIEW IF EXISTS v_category_method;
@@ -37,12 +29,12 @@ DROP VIEW IF EXISTS v_fx_raw;
 
 
 -- 0. FX rates derived from records (no manual rates)
+
 -- Take the implied rate (PEN amount / original amount) of every non-PEN process
 -- Discard unconverted rows (PEN amount equal to 0 or to the original amount)
 -- Discard rates outside +-15% of the currency-year average (bad source data)
 -- Resolve each rate by priority: same process, same currency and month, same currency and year, same currency overall
 -- A NULL ref_pen or award_pen means no rate was found for that currency
-
 CREATE VIEW v_fx_valid AS
     WITH raw_rates AS (
         SELECT
@@ -296,7 +288,7 @@ CREATE VIEW v_dim_department AS
 
 -- 3. Analysis views
 
--- [OPTIONAL] Rank suppliers by awarded amount (PEN) per year
+-- Rank suppliers by awarded amount (PEN) per year
 CREATE VIEW v_top_suppliers AS
     SELECT
         fa.year,
@@ -309,7 +301,7 @@ CREATE VIEW v_top_suppliers AS
     JOIN v_dim_supplier ds ON ds.supplier_id = fa.supplier_id
     GROUP BY fa.year, fa.supplier_id, ds.supplier_name;
 
--- [OPTIONAL] Rank suppliers per year with RANK()
+-- Rank suppliers per year with RANK()
 CREATE VIEW v_annual_supplier_ranking AS
     SELECT
         year,
@@ -320,7 +312,7 @@ CREATE VIEW v_annual_supplier_ranking AS
         RANK() OVER (PARTITION BY year ORDER BY total_amount DESC) AS ranking
     FROM v_top_suppliers;
 
--- [OPTIONAL] Measure supplier share (%) within each category and year
+-- Measure supplier share (%) within each category and year
 -- Prefer a DAX measure for the share in Power BI
 CREATE VIEW v_category_concentration AS
     WITH category_supplier_amount AS (
@@ -372,7 +364,7 @@ CREATE VIEW v_low_competition_processes AS
     GROUP BY r.ocid, r.year, r.tender_title, r.procuring_entity_name
     HAVING COUNT(t.tenderer_id) = 1;
 
--- [OPTIONAL] Summarize processes and amounts (PEN) per year
+-- Summarize processes and amounts (PEN) per year
 -- Compute the weighted tenderer average as tenderers_sum / processes_with_tenderers
 -- Compute the median from v_fact_process
 CREATE VIEW v_annual_summary AS
@@ -452,6 +444,7 @@ CREATE VIEW v_processes_without_award AS
 
 
 -- 4. Data quality summary, one row per finding
+
 -- Read each source once and unpivot the aggregates
 -- amount_pen is in PEN except for orphan contracts (contract currency)
 -- base is the denominator for percentages
