@@ -1,6 +1,6 @@
 # Public Procurement Analysis - Peru (2023-2025)
 
-For this project, I analyzed about 6.9 million records of Peru's public procurement data using SQLite and Power BI, built from the government's open contracting data (OCDS standard). I designed a relational schema with surrogate keys across six entities (processes, awards, contracts, suppliers, tenderers and parties), audited referential integrity and data quality (orphan contracts, unreported reference amounts, unreliable currency conversions and duplicate processes across OCID families), and built 23 SQL views (currency normalization, fact tables, dimensions, window function rankings, market concentration metrics and a data quality summary) to feed a five-page Power BI report with a star schema and 30+ DAX measures.
+For this project, I analyzed about 6.9 million records of Peru's public procurement data using SQLite and Power BI, built from the government's open contracting data (OCDS standard). I designed a relational schema with surrogate keys across six entities (processes, awards, contracts, suppliers, tenderers and parties), audited referential integrity and data quality (orphan contracts, unreported reference amounts, unreliable currency conversions and duplicate processes across OCID families), and built 13 SQL views (currency normalization, fact tables, dimensions, contract checks and a data quality summary) to feed a five-page Power BI report with a star schema and 30+ DAX measures.
 
 **Tools:** SQLite, SQL, Python (pandas), Power BI, DAX
 
@@ -8,7 +8,7 @@ For this project, I analyzed about 6.9 million records of Peru's public procurem
 
 **Outputs:**
 
-- Detailed SQL scripts for schema creation and 23 analytical views, in `.sql` format.
+- Detailed SQL scripts for schema creation and 13 analytical views, in `.sql` format.
 - Python/Jupyter notebook documenting the full ETL pipeline (extraction, cleaning, type validation, surrogate key construction) with in-line comments, in `.ipynb` format.
 - Power BI report with five pages (summary, suppliers, entities and geography, competition and category, data quality), in `.pbix` format.
 

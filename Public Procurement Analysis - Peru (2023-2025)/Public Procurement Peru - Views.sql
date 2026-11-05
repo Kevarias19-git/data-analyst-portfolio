@@ -1,19 +1,9 @@
 -- Views | Public Procurement Analysis - Peru (2023-2025)
 -- Run the whole script to rebuild every view (safe to re-run)
 
--- Drop all views (reverse dependency order)
+-- Drop all views
 DROP VIEW IF EXISTS v_data_quality_summary;
-DROP VIEW IF EXISTS v_processes_without_award;
-DROP VIEW IF EXISTS v_category_method;
-DROP VIEW IF EXISTS v_geographic_detail;
 DROP VIEW IF EXISTS v_orphan_contracts;
-DROP VIEW IF EXISTS v_contracts_with_variance;
-DROP VIEW IF EXISTS v_low_competition_processes;
-DROP VIEW IF EXISTS v_annual_summary;
-DROP VIEW IF EXISTS v_category_concentration;
-DROP VIEW IF EXISTS v_annual_supplier_ranking;
-DROP VIEW IF EXISTS v_top_suppliers;
-DROP VIEW IF EXISTS v_top_entities;
 DROP VIEW IF EXISTS v_dim_department;
 DROP VIEW IF EXISTS v_dim_method;
 DROP VIEW IF EXISTS v_dim_category;
@@ -25,8 +15,6 @@ DROP VIEW IF EXISTS v_fx_all;
 DROP VIEW IF EXISTS v_fx_year;
 DROP VIEW IF EXISTS v_fx_month;
 DROP VIEW IF EXISTS v_fx_valid;
--- Legacy view, no longer used
-DROP VIEW IF EXISTS v_fx_raw;
 
 -- 0. FX rates (derived from the data, no manual rates)
 -- Implied rate = amount in PEN / original amount
@@ -292,116 +280,7 @@ CREATE VIEW v_dim_department AS
         GROUP BY r.ocid
     );
 
--- 3. Analysis views
-
--- Amount (PEN) and awards won per supplier and year
-CREATE VIEW v_top_suppliers AS
-    SELECT
-        fa.year,
-        fa.supplier_id,
-        ds.supplier_name,
-        COUNT(DISTINCT fa.award_key) AS awards_won,
-        SUM(fa.award_pen) AS total_amount,
-        AVG(fa.award_pen) AS average_amount
-    FROM v_fact_award fa
-    JOIN v_dim_supplier ds ON ds.supplier_id = fa.supplier_id
-    GROUP BY fa.year, fa.supplier_id, ds.supplier_name;
-
--- Rank suppliers by amount within each year
-CREATE VIEW v_annual_supplier_ranking AS
-    SELECT
-        year,
-        supplier_id,
-        supplier_name,
-        total_amount,
-        awards_won,
-        RANK() OVER (PARTITION BY year ORDER BY total_amount DESC) AS ranking
-    FROM v_top_suppliers;
-
--- Supplier share (%) of the amount within each category and year
--- In Power BI, prefer the DAX measure
-CREATE VIEW v_category_concentration AS
-    WITH category_supplier_amount AS (
-        SELECT
-            fa.year,
-            r.procurement_category,
-            fa.supplier_id,
-            ds.supplier_name,
-            SUM(fa.award_pen) AS supplier_amount
-        FROM v_fact_award fa
-        JOIN records r ON r.ocid = fa.ocid
-        JOIN v_dim_supplier ds ON ds.supplier_id = fa.supplier_id
-        WHERE r.procurement_category IS NOT NULL
-        GROUP BY fa.year, r.procurement_category, fa.supplier_id, ds.supplier_name
-    )
-    SELECT
-        year,
-        procurement_category,
-        supplier_id,
-        supplier_name,
-        supplier_amount,
-        ROUND(100.0 * supplier_amount / SUM(supplier_amount) OVER (PARTITION BY year, procurement_category), 1) AS share_pct
-    FROM category_supplier_amount;
-
--- Processes, awarded processes and awarded amount (PEN) per entity and year
-CREATE VIEW v_top_entities AS
-    SELECT
-        year,
-        procuring_entity_id,
-        procuring_entity_name,
-        COUNT(*) AS processes_total,
-        SUM(is_awarded) AS processes_awarded,
-        SUM(award_pen) AS total_amount
-    FROM v_fact_process
-    WHERE procuring_entity_name IS NOT NULL
-    GROUP BY year, procuring_entity_id, procuring_entity_name;
-
--- Processes with exactly 1 tenderer (counted from ten_tenderers)
--- For other thresholds, use v_fact_process.n_tenderers
-CREATE VIEW v_low_competition_processes AS
-    SELECT
-        r.ocid,
-        r.year,
-        r.tender_title,
-        r.procuring_entity_name,
-        COUNT(t.tenderer_id) AS num_tenderers
-    FROM records r
-    JOIN ten_tenderers t ON t.ocid = r.ocid
-    GROUP BY r.ocid, r.year, r.tender_title, r.procuring_entity_name
-    HAVING COUNT(t.tenderer_id) = 1;
-
--- Totals per year: processes, reference and awarded amounts (PEN), tenderers
--- Weighted average tenderers = tenderers_sum / processes_with_tenderers
--- Compute the median from v_fact_process
-CREATE VIEW v_annual_summary AS
-    SELECT
-        year,
-        COUNT(*) AS total_processes,
-        SUM(is_awarded) AS processes_awarded,
-        SUM(ref_pen) AS total_reference_amount,
-        SUM(CASE WHEN is_awarded THEN ref_pen END) AS reference_awarded_amount,
-        SUM(CASE WHEN NOT is_awarded THEN ref_pen END) AS reference_unawarded_amount,
-        SUM(award_pen) AS total_awarded_amount,
-        AVG(n_tenderers) AS average_tenderers,
-        CAST(SUM(n_tenderers) AS REAL) AS tenderers_sum,
-        CAST(COUNT(n_tenderers) AS REAL) AS processes_with_tenderers
-    FROM v_fact_process
-    GROUP BY year;
-
--- Contract amount vs final value (original contract currency, not PEN)
-CREATE VIEW v_contracts_with_variance AS
-    SELECT
-        c.contract_key,
-        r.procuring_entity_id,
-        r.procuring_entity_name,
-        c.contract_amount,
-        c.final_value_amount,
-        c.amount_variance,
-        ROUND(100.0 * c.amount_variance / NULLIF(c.contract_amount, 0), 1) AS variance_pct,
-        c.year
-    FROM contracts c
-    JOIN records r ON r.ocid = c.ocid
-    WHERE c.amount_variance IS NOT NULL;
+-- 3. Contracts
 
 -- Contracts whose award does not exist in awards
 CREATE VIEW v_orphan_contracts AS
@@ -410,45 +289,7 @@ CREATE VIEW v_orphan_contracts AS
     LEFT JOIN records r ON r.ocid = c.ocid
     WHERE c.award_in_awards = 0;
 
--- Processes and awarded amount (PEN) per region, department and year
-CREATE VIEW v_geographic_detail AS
-    SELECT
-        region,
-        department,
-        year,
-        COUNT(*) AS processes_total,
-        SUM(is_awarded) AS processes_awarded,
-        SUM(award_pen) AS total_amount
-    FROM v_fact_process
-    WHERE region IS NOT NULL
-    GROUP BY region, department, year;
-
--- Processes and reference amount (PEN) per category and method
-CREATE VIEW v_category_method AS
-    SELECT
-        year,
-        procurement_category,
-        procurement_method,
-        COUNT(*) AS processes,
-        SUM(ref_pen) AS reference_amount
-    FROM v_fact_process
-    GROUP BY year, procurement_category, procurement_method;
-
--- Processes without award (with duplicate flag)
-CREATE VIEW v_processes_without_award AS
-    SELECT
-        ocid,
-        year,
-        procuring_entity_id,
-        procuring_entity_name,
-        procurement_category,
-        procurement_method,
-        ref_pen,
-        dup_status
-    FROM v_fact_process
-    WHERE NOT is_awarded;
-
--- 4. Data quality summary (one row per finding)
+-- 4. Data quality (one row per finding)
 
 -- cnt = affected rows | amount_pen = amount in PEN (orphan contracts: contract currency) | base = denominator for %
 CREATE VIEW v_data_quality_summary AS
