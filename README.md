@@ -41,7 +41,7 @@ The skills showcased in this project are T-SQL and SQL Server (bulk loading, sta
 ## Certificates
  
 - [Google Data Analysis with Python](https://www.coursera.org/account/accomplishments/specialization/MAM7P6F6GO56) (2026) (Google)
-- [Microsoft Power BI Data Analyst Professional Certificate](https://coursera.org/share/a27d231213dd55c0bb8c5457f90d26e0) (Microsoft)
+- [Microsoft Power BI Data Analyst Professional Certificate](https://coursera.org/share/a27d231213dd55c0bb8c5457f90d26e0) (2026) (Microsoft)
 - Microsoft Certified: Power BI Data Analyst Associate (PL-300) - *Expected: Dec 2027* (Microsoft)
 - AWS Knowledge Badge: Data Analytics -  (Amazon Web Services)
 - AWS Microcredential: Data Visualization Demonstrated - *Expected: Dec 2026* (Amazon Web Services)
