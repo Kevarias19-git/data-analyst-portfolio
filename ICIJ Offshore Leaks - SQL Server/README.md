@@ -193,7 +193,7 @@ In this phase I convert the text staging tables into typed tables in the `dbo` s
 - **Primary key on `node_id` (`BIGINT`)** in the five node tables.
 - **Empty strings become `NULL`** with `NULLIF(LTRIM(RTRIM(column)), '')`.
 - **Dates** are converted to `DATE` with `TRY_CONVERT`, which returns `NULL` instead of failing when a value cannot be converted.
-- **Column sizes**: my first version used tight sizes and the inserts failed with *"String or binary data would be truncated"* (country code lists in officers and long text in `link`). Instead of guessing, I measured the longest value of every staging column with a dynamic query. The longest value is **865 characters** (`note`), so I use `NVARCHAR(4000)` for all text columns.
+- **Column sizes**: I measured the longest value of every staging column with a dynamic query. The longest value is **865 characters** (`note`), so I use `NVARCHAR(4000)` for all text columns.
 
 ```sql
 -- Measure the longest value of every staging column
