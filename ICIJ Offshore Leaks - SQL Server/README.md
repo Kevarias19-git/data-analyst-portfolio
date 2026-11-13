@@ -92,11 +92,7 @@ WITH (FORMAT = 'CSV', FIRSTROW = 2, FIELDQUOTE = '"', CODEPAGE = '65001',
       ROWTERMINATOR = '0x0a', TABLOCK);
 ```
 
-### 2.1 A loading problem: line endings
-
-My first attempt failed in every file with the error *"Cannot obtain the required interface ('IID_IColumnsInfo') from OLE DB provider 'BULK'"*. I ruled out permissions (SQL Server could read the file with `OPENROWSET`), column sizes and the code page. A tiny test CSV loaded correctly, and the difference was the **line ending**: the ICIJ files end each line with LF only (`0x0a`), while my test file used Windows line endings. Adding `ROWTERMINATOR = '0x0a'` solved it.
-
-### 2.2 Checking the load
+### 2.1 Checking the load
 
 I check the load by comparing the lines of each CSV file with the rows loaded in each staging table.
 
